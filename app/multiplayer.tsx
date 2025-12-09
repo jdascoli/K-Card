@@ -100,6 +100,27 @@ export default function Multiplayer() {
             playFlipAnimation(myResult)
         }
         if (msg.type === "PLAY_CARD") handleOpponentPlay(msg.card)
+        
+        if (msg.type === "REMATCH_REQUEST") {
+            // Run the local reset logic, but skip the communication step.
+            // The sender already sent the message, so we just reset states.
+            setGameResult(null)
+            setPlayedPairs([])
+            setRevealedRounds([])
+            setHand([])
+            setOpHand([])
+            setCanPlay(false) 
+            setFlipping(false)
+            setShowCards(false)
+            setFlipResult(null)
+            setFlipMessage("")
+            setPlayerTurn("me") 
+            setNextStarter("me")
+            setReadyToFlip(true); // Both parties become ready
+            
+            showPopup("Opponent requested a rematch! Host will start the flip.");
+        }
+        // -------------------------
     }
 
     // -------------------------------
@@ -141,6 +162,36 @@ export default function Multiplayer() {
 
         setShowFlipMessage(true)
         setTimeout(() => setShowFlipMessage(false), 2000)
+    }
+
+    const handleRematch = () => {
+        // 1. Reset all game state variables on the local client
+        setGameResult(null)
+        setPlayedPairs([])
+        setRevealedRounds([])
+        setHand([])
+        setOpHand([])
+        setCanPlay(false) 
+        setFlipping(false)
+        setShowCards(false)
+        setFlipResult(null)
+        setFlipMessage("")
+        setPlayerTurn("me") 
+        setNextStarter("me")
+
+        // 2. Communicate the rematch request
+        if (conn) {
+            // Send a request to the other player that a rematch is starting
+            conn.send({ type: "REMATCH_REQUEST" });
+        }
+
+        // 3. Prepare for the Host to start the new round (Host responsibility)
+        if (isHost) {
+            setReadyToFlip(true);
+            showPopup("Rematch initiated! Click 'Start Game' when ready.");
+        } else {
+            showPopup("Rematch requested! Waiting for host to start the game.");
+        }
     }
 
     useEffect(() => {
@@ -470,12 +521,20 @@ export default function Multiplayer() {
                         <Text style={{ fontSize: 32, color: "white" }}>
                             {gameResult === "win" ? "You Win!" : "You Lose!"}
                         </Text>
-                        <Pressable
-                            onPress={() => router.push("/")}
-                            style={{ marginTop: 20, padding: 10, backgroundColor: "blue", borderRadius: 8 }}
-                        >
-                            <Text style={{ color: "white" }}>Return to Menu</Text>
-                        </Pressable>
+                        <View style={{ flexDirection: "row", marginTop: 20, gap: 10 }}> 
+                            <Pressable
+                                onPress={handleRematch}
+                                style={{ padding: 10, backgroundColor: "green", borderRadius: 8 }}
+                            >
+                                <Text style={{ color: "white" }}>Rematch</Text>
+                            </Pressable>
+                            <Pressable
+                                onPress={() => router.push("/")}
+                                style={{ padding: 10, backgroundColor: "blue", borderRadius: 8 }}
+                            >
+                                <Text style={{ color: "white" }}>Return to Menu</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 )}
             </View>

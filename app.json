@@ -1,17 +1,22 @@
 {
   "expo": {
     "name": "RebellionAgainstTheKing",
-    "slug": "RebellionAgainstTheKing",
+    "slug": "k-card",
     "version": "1.0.0",
     "orientation": "landscape",
     "scheme": "rebellionagainsttheking",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.joshuadascolisorganization.kcard",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.joshuadascolisorganization.kcard"
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +38,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dc3ef01c-c26e-465d-b532-f2b78c15b152"
+      }
+    },
+    "owner": "joshuadascolis-organization"
   }
 }

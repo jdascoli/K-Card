@@ -143,10 +143,17 @@ export default function Singleplayer() {
         setFlipMessage(res === "heads" ? "You go first" : "You go second")
     }, [])
 
-    // Called when flip animation ends
-    const endFlip = () => {
-        setFlipping(false); setShowCards(true)
-        if (flipResult === "heads") {
+    // -------------------------------
+    // Core Game Initialization
+    // -------------------------------
+    const startGame = (res: 'heads' | 'tails') => {
+        setFlipping(false); 
+        setShowCards(true); 
+        setGameResult(null); // Ensure game result is cleared on start
+        setPlayedPairs([]); // Clear played cards
+        setRevealedRounds([]); // Clear revealed rounds
+
+        if (res === "heads") {
             setHand(["king", "villager", "villager", "villager", "villager"])
             setOpHand(["peasant", "villager", "villager", "villager", "villager"])
             setPlayerTurn("me"); setNextStarter("op"); setFlipMessage("You go first")
@@ -157,11 +164,53 @@ export default function Singleplayer() {
             setPlayerTurn("op"); setNextStarter("me"); setFlipMessage("You go second")
             setPlayerRole("peasant")
         }
+
         // Show “You go first/second” text briefly
         setShowFlipMessage(true)
         setTimeout(() => {
-            setShowFlipMessage(false); setShowCards(true)
+            setShowFlipMessage(false); 
         }, 2000)
+    }
+
+    // -------------------------------
+    // Rematch Logic
+    // -------------------------------
+    const handleRematch = () => {
+        // 1. CLEAR CARD STATES IMMEDIATELY
+        setHand([]) // Clear player's hand
+        setOpHand([]) // Clear opponent's hand (back of cards)
+        setPlayedPairs([]) // Clear cards displayed in the middle
+        setRevealedRounds([]) // Clear revealed rounds
+
+        // 2. Reset game flow states
+        setGameResult(null)
+        setCanPlay(true) 
+        setRoundInProgress(false)
+        setShowCards(false) // Hide cards while flipping
+
+        // 3. Trigger the coin flip (new game start)
+        setTimeout(() => {
+        // 3. Trigger the coin flip (new game start)
+            setFlipping(true)
+
+            const res = Math.random() < 0.5 ? "heads" : "tails"
+            setFlipResult(res)
+            setFlipMessage(res === "heads" ? "You go first" : "You go second")
+        }, 0);
+    }
+
+
+    // Modify the useEffect (around line 144) to call handleRematch for initial setup:
+    useEffect(() => {
+        handleRematch()
+         
+    }, []) // The empty array here ensures this runs only once on mount
+
+
+    // Modify the endFlip function (around line 160) to use startGame:
+    const endFlip = () => {
+        // Remove all the state setters that were here previously and replace with:
+        startGame(flipResult)
     }
 
     // -------------------------------
@@ -307,9 +356,14 @@ export default function Singleplayer() {
                     {gameResult && (
                         <View style={{ position: "absolute", top: "40%", alignItems: "center" }}>
                             <Text style={{ fontSize: 32, color: "white" }}>{gameResult === "win" ? "You Win!" : "You Lose!"}</Text>
-                            <Pressable onPress={() => router.push("/")} style={{ marginTop: 20, padding: 10, backgroundColor: "blue", borderRadius: 8 }}>
-                                <Text style={{ color: "white" }}>Return to Menu</Text>
-                            </Pressable>
+                            <View style={{ flexDirection: "row", marginTop: 20, gap: 10 }}> 
+                                <Pressable onPress={handleRematch} style={{ padding: 10, backgroundColor: "green", borderRadius: 8 }}>
+                                    <Text style={{ color: "white" }}>Rematch</Text>
+                                </Pressable>
+                                <Pressable onPress={() => router.push("/")} style={{ padding: 10, backgroundColor: "blue", borderRadius: 8 }}>
+                                    <Text style={{ color: "white" }}>Return to Menu</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     )}
                 </View>

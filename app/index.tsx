@@ -6,13 +6,26 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground source={require(`../assets/images/mossWall.png`)} style={{flex: 1, justifyContent: "center", alignItems: "center",  width: "100%", height: "100%"}}>
-      <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 100 }}>
-        <Pressable onPress={() => router.push("/singleplayer")}style={{ backgroundColor: "rgb(8, 44, 11)", paddingVertical: 20, paddingHorizontal: 40, borderRadius: 10,}}>
-        <Text style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>Singleplayer</Text>
-      </Pressable>
-        <Pressable onPress={() => router.push("/multiplayer")}style={{ backgroundColor: "rgb(8, 44, 11)", paddingVertical: 20, paddingHorizontal: 40, borderRadius: 10,}}>
-        <Text style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>Multiplayer</Text>
-      </Pressable>
+      <View style={{ 
+          flexDirection: "column", 
+          justifyContent: "center", 
+          alignItems: "center", 
+          gap: 20, 
+          padding: 20, 
+          borderRadius: 10
+        }}>
+        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 100 }}>
+          <Pressable onPress={() => router.push("/singleplayer")} style={{ backgroundColor: "rgb(9, 65, 17)", paddingVertical: 20, paddingHorizontal: 40, borderRadius: 10,}}>
+            <Text style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>Singleplayer</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push("/multiplayer")} style={{ backgroundColor: "rgb(9, 65, 17)", paddingVertical: 20, paddingHorizontal: 40, borderRadius: 10,}}>
+            <Text style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>Multiplayer</Text>
+          </Pressable>
+        </View>
+
+        <Pressable onPress={() => router.push("/howToPlay")} style={{ backgroundColor: "rgb(9, 65, 17)", paddingVertical: 20, paddingHorizontal: 40, borderRadius: 10, marginTop: 30}}>
+          <Text style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>How to Play</Text>
+        </Pressable>
       </View>
     </ImageBackground>
   );
